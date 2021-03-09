@@ -13,7 +13,6 @@ var cnt = 0;
 var end = 1;
 var start = 0;
 var prices = [];
-
 var n = 10;
 var option = 2;
 const fs = require("fs"),
@@ -31,7 +30,7 @@ fs.open(file, "r", (err, fd) => {
   for (let pair of buff.entries()) {
     const charCode = pair[1];
     if (cnt >= 3) {
-        prices[cnt] = charCode;
+        prices[(cnt-3)] = charCode;
     }
     cnt++;
     //console.log(cnt);
