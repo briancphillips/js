@@ -9,19 +9,18 @@ class Parameters {
         this.mini = 0;
     }
 }
-let val = new Parameters();
+let val;
 let tmp = new Parameters();
 let tmp2 = new Parameters();
 var cnt = 0;
 
-var start = 1;
-var end = 4;
+
 var end2;
 
 var prices = [];
 var tmp3 = [];
 var ar2;
-var n = 10;
+var n;
 var option = 2;
 var secret;
 var iter = 0;
@@ -33,11 +32,11 @@ const fs = require("fs");
 
 
 readFile().then(() => {
-
+    n=(sc.length-8)/8;
     for (i = 0; i < sc.length + 8; i++) {
         if (i > 8 && i % 8 == 0) {
             tmp3[iter] = sc[(i - 8)] + sc[(i - 7)] + sc[(i - 6)] + sc[(i - 5)] + sc[(i - 4)] + sc[(i - 3)] + sc[(i - 2)] + sc[(i - 1)];
-            prices[iter] = parseFloat("0x"+tmp3[iter]);
+            prices[iter] = parseFloat('0x'+tmp3[iter]);
             iter++;
             
         }
@@ -48,8 +47,8 @@ readFile().then(() => {
     
 }).then(() => {
     t1 = Date.now;    
-    DivideNConquerLinear(start, end);    
-    console.log(val.p, val.s, val.dmax);
+    DivideNConquerLinear(0, n-1);    
+    console.log(val.p, val.s, val.dmax.toFixed(4));
     t2 = Date.now;
     //console.log(tmp3);
 });
@@ -97,7 +96,7 @@ readFile().then(() => {
 
 
 async function readFile() {
-    const f = './mystock0.bin';
+    const f = './mystock1.bin';
     secret = await fs.promises.readFile(f);
     const stats = fs.statSync(f);
     (len = stats.size), (buff = Buffer.alloc(len)), (pos = 0), (offset = 0);
@@ -107,6 +106,18 @@ async function readFile() {
     
 
 
+}
+
+const HexToFloat32 = (str) => {
+    var int = parseInt(str, 16);
+    if (int > 0 || int < 0) {
+        var sign = (int >>> 31) ? -1 : 1;
+        var exp = (int >>> 23 & 0xff) - 127;
+        var mantissa = ((int & 0x7fffff) + 0x800000).toString(2);
+        var float32 = 0
+        for (i = 0; i < mantissa.length; i += 1) { float32 += parseInt(mantissa[i]) ? Math.pow(2, exp) : 0; exp-- }
+        return float32 * sign;
+    } else return 0
 }
 
 
@@ -139,10 +150,15 @@ function parseFloat(str) {
 
 
 function DivideNConquerLinear(s, e) {
-    start = s;
-    end = e;
+    
+    val = new Parameters();
+    
+    let start = s;
+    let end = e;
+    
     
     if (end - start == 1) {
+        //console.log("spread = 1");
         val.dmax = prices[end] - prices[start];
         if (prices[start] > prices[end]) {
             val.amax = prices[start];
@@ -158,7 +174,7 @@ function DivideNConquerLinear(s, e) {
         val.p = start;
         val.s = end;
     } else if (end - start == 2) {
-        console.log("spread = 2")
+        //console.log("spread = 2")
         price1 = prices[end] - prices[start];
         price2 = prices[start + 1] - prices[start];
         price3 = prices[end] - prices[start + 1];
@@ -204,10 +220,14 @@ function DivideNConquerLinear(s, e) {
             val.mini = end;
         }
     } else {        
-        console.log("spread > 2");
-        end2 = (start + end) / 2;
-        tmp = setTimeout(() => { DivideNConquerLinear(start, end2); });
-        tmp2 = setTimeout(() => { DivideNConquerLinear(end2 + 1, end); });      
+        //console.log("spread > 2");
+        //if(end-start > 2) {
+            end2 = Math.floor((start + end) / 2);
+            tmp = DivideNConquerLinear(start, end2); 
+            tmp2 = DivideNConquerLinear(end2 + 1, end);
+        //} 
+        // tmp =setTimeout(() => { DivideNConquerLinear(start, end2); });
+        // tmp2 = setTimeout(() => { DivideNConquerLinear(end2 + 1, end); });      
          
                
         // try {
@@ -249,15 +269,15 @@ function DivideNConquerLinear(s, e) {
             val.mini = tmp2.mini;
         }
 
-        console.log("val.p is "+val.p);
-        console.log("val.s is "+val.p);
-        console.log("val.dmax is "+val.dmax);
+        //console.log("val.p is "+val.p);
+        //console.log("val.s is "+val.p);
+        //console.log("val.dmax is "+val.dmax);
         //console.log("price1 is "+price1);
         
     }    
     n++;
-    console.log("n is "+n);
-    
+    //console.log("n is "+n);
+    //if(n>100000) return val;
     return val;
 
 }
