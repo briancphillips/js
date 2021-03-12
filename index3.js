@@ -32,22 +32,22 @@ const fs = require("fs");
 
 
 readFile().then(() => {
-    n=(sc.length-8)/8;
+    n = (sc.length - 8) / 8;
     for (i = 0; i < sc.length + 8; i++) {
         if (i > 8 && i % 8 == 0) {
             tmp3[iter] = sc[(i - 8)] + sc[(i - 7)] + sc[(i - 6)] + sc[(i - 5)] + sc[(i - 4)] + sc[(i - 3)] + sc[(i - 2)] + sc[(i - 1)];
-            prices[iter] = parseFloat('0x'+tmp3[iter]);
+            prices[iter] = parseFloat('0x' + tmp3[iter]);
             iter++;
-            
+
         }
-        
+
     }
-    
-    
-    
+
+
+
 }).then(() => {
-    t1 = Date.now;    
-    DivideNConquerLinear(0, n-1);    
+    t1 = Date.now;
+    DivideNConquerLinear(0, n - 1);
     console.log(val.p, val.s, val.dmax.toFixed(4));
     t2 = Date.now;
     //console.log(tmp3);
@@ -103,12 +103,54 @@ async function readFile() {
     console.log("File Size in Bytes: " + len);
     //console.log(secret);
     sc = secret.toString('hex');
-    
+
 
 
 }
 
-const HexToFloat32 = (str) => {
+// var ConvertBase = function (num) {
+//     return {
+//         from: function (baseFrom) {
+//             return {
+//                 to: function (baseTo) {
+//                     return parseInt(num, baseFrom).toString(baseTo);
+//                 }
+//             };
+//         }
+//     };
+// };
+
+// var convertBase = function () {
+
+//     function convertBase(baseFrom, baseTo) {
+//         return function (num) {
+//             return parseInt(num, baseFrom).toString(baseTo);
+
+//         };
+//     }
+
+//     // binary to decimal
+//     convertBase.bin2dec = convertBase(2, 10);
+
+//     // binary to hexadecimal
+//     convertBase.bin2hex = convertBase(2, 16);
+
+//     // decimal to binary
+//     convertBase.dec2bin = convertBase(10, 2);
+
+//     // decimal to hexadecimal
+//     convertBase.dec2hex = convertBase(10, 16);
+
+//     // hexadecimal to binary
+//     convertBase.hex2bin = convertBase(16, 2);
+
+//     // hexadecimal to decimal
+//     convertBase.hex2dec = convertBase(16, 10);
+
+//     return convertBase;
+// }();
+
+let HexToFloat32 = (str) => {
     var int = parseInt(str, 16);
     if (int > 0 || int < 0) {
         var sign = (int >>> 31) ? -1 : 1;
@@ -143,6 +185,7 @@ function parseFloat(str) {
         float += parseInt(mantissa[i]) ? Math.pow(2, exp) : 0;
         exp--;
     }
+    console.log(float)
     return float * sign;
 }
 
@@ -150,13 +193,13 @@ function parseFloat(str) {
 
 
 function DivideNConquerLinear(s, e) {
-    
+
     val = new Parameters();
-    
+
     let start = s;
     let end = e;
-    
-    
+
+
     if (end - start == 1) {
         //console.log("spread = 1");
         val.dmax = prices[end] - prices[start];
@@ -219,25 +262,25 @@ function DivideNConquerLinear(s, e) {
             val.amin = prices[end];
             val.mini = end;
         }
-    } else {        
+    } else {
         //console.log("spread > 2");
         //if(end-start > 2) {
-            end2 = Math.floor((start + end) / 2);
-            tmp = DivideNConquerLinear(start, end2); 
-            tmp2 = DivideNConquerLinear(end2 + 1, end);
+        end2 = Math.floor((start + end) / 2);
+        tmp = DivideNConquerLinear(start, end2);
+        tmp2 = DivideNConquerLinear(end2 + 1, end);
         //} 
         // tmp =setTimeout(() => { DivideNConquerLinear(start, end2); });
         // tmp2 = setTimeout(() => { DivideNConquerLinear(end2 + 1, end); });      
-         
-               
+
+
         // try {
-            
+
         //     tmp = DivideNConquerLinear(start, end2);
         //     tmp2 = DivideNConquerLinear(end2 + 1, end);
         // } catch(err) {
         //     //console.log('error');
         // }
-                       
+
         spread = tmp2.amax - tmp.amin;
         if (tmp.dmax > tmp2.dmax && tmp.dmax > spread) {
             val.dmax = tmp.dmax;
@@ -273,8 +316,8 @@ function DivideNConquerLinear(s, e) {
         //console.log("val.s is "+val.p);
         //console.log("val.dmax is "+val.dmax);
         //console.log("price1 is "+price1);
-        
-    }    
+
+    }
     n++;
     //console.log("n is "+n);
     //if(n>100000) return val;
