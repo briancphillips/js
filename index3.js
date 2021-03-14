@@ -32,25 +32,31 @@ const fs = require("fs");
 
 
 readFile().then(() => {
-    n = (sc.length - 8) / 8;
-    for (i = 0; i < sc.length + 8; i++) {
+    n = (sc.length) / 8 -1;
+    for (i = 0; i <= sc.length+8; i++) {
         if (i > 8 && i % 8 == 0) {
             tmp3[iter] = sc[(i - 8)] + sc[(i - 7)] + sc[(i - 6)] + sc[(i - 5)] + sc[(i - 4)] + sc[(i - 3)] + sc[(i - 2)] + sc[(i - 1)];
+            
+            console.log(tmp3[iter]);
             prices[iter] = parseFloat('0x' + tmp3[iter]);
+            //console.log(prices[iter].toFixed(4))
             iter++;
 
         }
 
     }
+    prices=prices.slice(0,-1)
+    console.log(prices)
 
 
 
 }).then(() => {
     t1 = Date.now;
     DivideNConquerLinear(0, n - 1);
+    
     console.log(val.p, val.s, val.dmax.toFixed(4));
     t2 = Date.now;
-    //console.log(tmp3);
+    //console.log(prices);
 });
 
 
@@ -99,11 +105,11 @@ async function readFile() {
     const f = './mystock1.bin';
     secret = await fs.promises.readFile(f);
     const stats = fs.statSync(f);
-    (len = stats.size), (buff = Buffer.alloc(len)), (pos = 0), (offset = 0);
+    (len = stats.size);
     console.log("File Size in Bytes: " + len);
     //console.log(secret);
     sc = secret.toString('hex');
-
+    //console.log(sc)
 
 
 }
@@ -185,7 +191,7 @@ function parseFloat(str) {
         float += parseInt(mantissa[i]) ? Math.pow(2, exp) : 0;
         exp--;
     }
-    console.log(float)
+    //console.log(float.toFixed(4))
     return float * sign;
 }
 
