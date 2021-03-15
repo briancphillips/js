@@ -37,7 +37,7 @@ readFile().then(() => {
         if (i > 8 && i % 8 == 0) {
             tmp3[iter] = sc[(i - 8)] + sc[(i - 7)] + sc[(i - 6)] + sc[(i - 5)] + sc[(i - 4)] + sc[(i - 3)] + sc[(i - 2)] + sc[(i - 1)];
             
-            console.log(tmp3[iter]);
+            //console.log(tmp3[iter]);
             prices[iter] = parseFloat('0x' + tmp3[iter]);
             //console.log(prices[iter].toFixed(4))
             iter++;
@@ -46,7 +46,7 @@ readFile().then(() => {
 
     }
     prices=prices.slice(0,-1)
-    console.log(prices)
+    //console.log(prices)
 
 
 
@@ -102,7 +102,7 @@ readFile().then(() => {
 
 
 async function readFile() {
-    const f = './mystock1.bin';
+    const f = './mystock3.bin';
     secret = await fs.promises.readFile(f);
     const stats = fs.statSync(f);
     (len = stats.size);
